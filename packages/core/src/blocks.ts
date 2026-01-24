@@ -1,4 +1,4 @@
-import type { Block, Pong404Theme } from './types';
+import type { Block, Breakout404Theme } from './types';
 import { getBlockColor } from './theme';
 
 // Pixel patterns for digits (5 wide x 7 tall)
@@ -26,7 +26,7 @@ const DIGIT_PATTERNS: Record<string, number[][]> = {
 export function create404Blocks(
   canvasWidth: number,
   canvasHeight: number,
-  theme: Pong404Theme
+  theme: Breakout404Theme
 ): Block[] {
   const blocks: Block[] = [];
 

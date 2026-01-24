@@ -1,6 +1,6 @@
-import type { Pong404Theme } from './types';
+import type { Breakout404Theme } from './types';
 
-export const defaultTheme: Pong404Theme = {
+export const defaultTheme: Breakout404Theme = {
   background: '#0a0a0a',
   paddle: '#ffffff',
   ball: '#ffffff',
@@ -9,11 +9,11 @@ export const defaultTheme: Pong404Theme = {
   font: 'monospace',
 };
 
-export function mergeTheme(custom?: Partial<Pong404Theme>): Pong404Theme {
+export function mergeTheme(custom?: Partial<Breakout404Theme>): Breakout404Theme {
   return { ...defaultTheme, ...custom };
 }
 
-export function getBlockColor(theme: Pong404Theme, rowIndex: number): string {
+export function getBlockColor(theme: Breakout404Theme, rowIndex: number): string {
   if (typeof theme.blocks === 'string') {
     return theme.blocks;
   }

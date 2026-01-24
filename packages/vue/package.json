@@ -1,7 +1,7 @@
 {
-  "name": "@pong404/vue",
+  "name": "@breakout404/vue",
   "version": "1.0.0",
-  "description": "Vue component for Pong404 - a Breakout-style 404 page game",
+  "description": "Vue component for Breakout404 - a Breakout-style 404 page game",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,13 +18,13 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rimraf dist"
   },
-  "keywords": ["404", "pong", "breakout", "game", "vue", "nuxt"],
+  "keywords": ["404", "breakout", "game", "vue", "nuxt"],
   "license": "MIT",
   "peerDependencies": {
     "vue": ">=3.0.0"
   },
   "dependencies": {
-    "@pong404/core": "workspace:*"
+    "@breakout404/core": "workspace:*"
   },
   "devDependencies": {
     "vue": "^3.4.0",

@@ -1,11 +1,15 @@
 import { defineComponent, ref, onMounted, onUnmounted, h, type PropType } from 'vue';
-import { Pong404Game, type Pong404Options, type Pong404Theme } from '@pong404/core';
+import {
+  Breakout404Game,
+  type Breakout404Options,
+  type Breakout404Theme,
+} from '@breakout404/core';
 
-export const Pong404 = defineComponent({
-  name: 'Pong404',
+export const Breakout404 = defineComponent({
+  name: 'Breakout404',
   props: {
     theme: {
-      type: Object as PropType<Partial<Pong404Theme>>,
+      type: Object as PropType<Partial<Breakout404Theme>>,
       default: undefined,
     },
     difficulty: {
@@ -28,12 +32,12 @@ export const Pong404 = defineComponent({
   emits: ['complete', 'blockDestroyed'],
   setup(props, { emit }) {
     const containerRef = ref<HTMLElement | null>(null);
-    let game: Pong404Game | null = null;
+    let game: Breakout404Game | null = null;
 
     onMounted(() => {
       if (!containerRef.value) return;
 
-      const options: Pong404Options = {
+      const options: Breakout404Options = {
         theme: props.theme,
         difficulty: props.difficulty,
         showScore: props.showScore,
@@ -43,7 +47,7 @@ export const Pong404 = defineComponent({
         onBlockDestroyed: (remaining) => emit('blockDestroyed', remaining),
       };
 
-      game = new Pong404Game(containerRef.value, options);
+      game = new Breakout404Game(containerRef.value, options);
     });
 
     onUnmounted(() => {
@@ -62,4 +66,4 @@ export const Pong404 = defineComponent({
   },
 });
 
-export default Pong404;
+export default Breakout404;

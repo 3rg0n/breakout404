@@ -5,21 +5,21 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-// Serve static files from the pong404 core dist folder
+// Serve static files from the breakout404 core dist folder
 app.use(
-  '/pong404',
+  '/breakout404',
   express.static(join(__dirname, '../../packages/core/dist'))
 );
 
 // Example route
 app.get('/', (req, res) => {
   res.send(`
-    <h1>Express Pong404 Example</h1>
+    <h1>Express Breakout404 Example</h1>
     <p>Visit <a href="/anything">/anything</a> to see the 404 game.</p>
   `);
 });
 
-// 404 handler with Pong404 game
+// 404 handler with Breakout404 game
 app.use((req, res) => {
   res.status(404).send(`
     <!DOCTYPE html>
@@ -37,9 +37,9 @@ app.use((req, res) => {
     <body>
       <div id="game"></div>
       <script type="module">
-        import { Pong404Game } from '/pong404/pong404.mjs';
+        import { Breakout404Game } from '/breakout404/breakout404.mjs';
 
-        new Pong404Game('#game', {
+        new Breakout404Game('#game', {
           difficulty: 'medium',
           showScore: true,
           theme: {

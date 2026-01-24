@@ -1,15 +1,15 @@
 {
-  "name": "@pong404/core",
+  "name": "@breakout404/core",
   "version": "1.0.0",
-  "description": "Core Pong404 game engine - a Breakout-style 404 page game",
-  "main": "./dist/pong404.umd.js",
-  "module": "./dist/pong404.mjs",
+  "description": "Core Breakout404 game engine - a Breakout-style 404 page game",
+  "main": "./dist/breakout404.umd.js",
+  "module": "./dist/breakout404.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/pong404.mjs",
-      "require": "./dist/pong404.umd.js"
+      "import": "./dist/breakout404.mjs",
+      "require": "./dist/breakout404.umd.js"
     }
   },
   "files": ["dist"],
@@ -18,7 +18,7 @@
     "dev": "vite build --watch",
     "clean": "rimraf dist"
   },
-  "keywords": ["404", "pong", "breakout", "game", "canvas"],
+  "keywords": ["404", "breakout", "game", "canvas"],
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.3.0",

@@ -1,8 +1,8 @@
 # Static Files
 
-Copy the built pong404 files here after building:
+Copy the built breakout404 files here after building:
 
 ```bash
-cp ../../packages/core/dist/pong404.mjs ./
-cp ../../packages/core/dist/pong404.umd.js ./
+cp ../../packages/core/dist/breakout404.mjs ./
+cp ../../packages/core/dist/breakout404.umd.js ./
 ```

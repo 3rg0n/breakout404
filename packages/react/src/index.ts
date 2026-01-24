@@ -1,5 +1,9 @@
-import { Pong404 } from './Pong404';
+import { Breakout404 } from './Breakout404';
 
-export { Pong404, type Pong404Props } from './Pong404';
-export { defaultTheme, type Pong404Theme, type Pong404Options } from '@pong404/core';
-export default Pong404;
+export { Breakout404, type Breakout404Props } from './Breakout404';
+export {
+  defaultTheme,
+  type Breakout404Theme,
+  type Breakout404Options,
+} from '@breakout404/core';
+export default Breakout404;

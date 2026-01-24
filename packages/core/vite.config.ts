@@ -5,8 +5,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'Pong404',
-      fileName: 'pong404',
+      name: 'Breakout404',
+      fileName: 'breakout404',
       formats: ['es', 'umd'],
     },
     rollupOptions: {

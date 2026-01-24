@@ -1,9 +1,9 @@
-import type { GameState, Pong404Theme } from './types';
+import type { GameState, Breakout404Theme } from './types';
 
 export function render(
   ctx: CanvasRenderingContext2D,
   state: GameState,
-  theme: Pong404Theme,
+  theme: Breakout404Theme,
   showScore: boolean
 ): void {
   const { width, height } = ctx.canvas;

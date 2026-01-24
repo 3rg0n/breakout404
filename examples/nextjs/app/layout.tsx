@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Pong404 Next.js Example',
+  title: 'Breakout404 Next.js Example',
 };
 
 export default function RootLayout({

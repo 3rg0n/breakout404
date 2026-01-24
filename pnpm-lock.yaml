@@ -38,7 +38,7 @@ importers:
 
   examples/nextjs:
     dependencies:
-      '@pong404/react':
+      '@breakout404/react':
         specifier: workspace:*
         version: link:../../packages/react
       next:
@@ -75,7 +75,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@pong404/core':
+      '@breakout404/core':
         specifier: workspace:*
         version: link:../core
       react-dom:
@@ -100,7 +100,7 @@ importers:
 
   packages/vue:
     dependencies:
-      '@pong404/core':
+      '@breakout404/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

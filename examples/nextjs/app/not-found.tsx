@@ -1,11 +1,11 @@
 'use client';
 
-import { Pong404 } from '@pong404/react';
+import { Breakout404 } from '@breakout404/react';
 
 export default function NotFound() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Pong404
+      <Breakout404
         difficulty="medium"
         showScore={true}
         theme={{

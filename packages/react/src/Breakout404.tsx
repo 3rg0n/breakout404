@@ -1,19 +1,23 @@
 import React, { useEffect, useRef } from 'react';
-import { Pong404Game, type Pong404Options } from '@pong404/core';
+import { Breakout404Game, type Breakout404Options } from '@breakout404/core';
 
-export interface Pong404Props extends Pong404Options {
+export interface Breakout404Props extends Breakout404Options {
   className?: string;
   style?: React.CSSProperties;
 }
 
-export function Pong404({ className, style, ...options }: Pong404Props): React.ReactElement {
+export function Breakout404({
+  className,
+  style,
+  ...options
+}: Breakout404Props): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
-  const gameRef = useRef<Pong404Game | null>(null);
+  const gameRef = useRef<Breakout404Game | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    gameRef.current = new Pong404Game(containerRef.current, options);
+    gameRef.current = new Breakout404Game(containerRef.current, options);
 
     return () => {
       gameRef.current?.destroy();
@@ -43,4 +47,4 @@ export function Pong404({ className, style, ...options }: Pong404Props): React.R
   );
 }
 
-export default Pong404;
+export default Breakout404;

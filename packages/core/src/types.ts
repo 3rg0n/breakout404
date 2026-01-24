@@ -1,4 +1,4 @@
-export interface Pong404Theme {
+export interface Breakout404Theme {
   background: string;
   paddle: string;
   ball: string;
@@ -7,8 +7,8 @@ export interface Pong404Theme {
   font: string;
 }
 
-export interface Pong404Options {
-  theme?: Partial<Pong404Theme>;
+export interface Breakout404Options {
+  theme?: Partial<Breakout404Theme>;
   difficulty?: 'easy' | 'medium' | 'hard';
   showScore?: boolean;
   onComplete?: () => void;

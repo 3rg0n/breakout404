@@ -1,4 +1,4 @@
-# Pong404
+# Breakout404
 
 A customizable 404 page game library where users destroy blocks forming "404" in a Breakout-style game. Works with any framework.
 
@@ -15,13 +15,13 @@ A customizable 404 page game library where users destroy blocks forming "404" in
 
 ```bash
 # Core package (vanilla JS/TS)
-npm install @pong404/core
+npm install @breakout404/core
 
 # React/Next.js
-npm install @pong404/react
+npm install @breakout404/react
 
 # Vue/Nuxt
-npm install @pong404/vue
+npm install @breakout404/vue
 ```
 
 ## Quick Start
@@ -31,9 +31,9 @@ npm install @pong404/vue
 ```html
 <div id="game" style="width: 100%; height: 100vh;"></div>
 <script type="module">
-  import { Pong404Game } from '@pong404/core';
+  import { Breakout404Game } from '@breakout404/core';
 
-  new Pong404Game('#game', {
+  new Breakout404Game('#game', {
     difficulty: 'medium',
     showScore: true,
   });
@@ -46,12 +46,12 @@ npm install @pong404/vue
 // app/not-found.tsx
 'use client';
 
-import { Pong404 } from '@pong404/react';
+import { Breakout404 } from '@breakout404/react';
 
 export default function NotFound() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Pong404
+      <Breakout404
         difficulty="medium"
         showScore={true}
         onComplete={() => console.log('Game complete!')}
@@ -66,7 +66,7 @@ export default function NotFound() {
 ```vue
 <template>
   <div style="width: 100vw; height: 100vh">
-    <Pong404
+    <Breakout404
       difficulty="medium"
       :show-score="true"
       @complete="onComplete"
@@ -75,7 +75,7 @@ export default function NotFound() {
 </template>
 
 <script setup>
-import { Pong404 } from '@pong404/vue';
+import { Breakout404 } from '@breakout404/vue';
 
 const onComplete = () => console.log('Game complete!');
 </script>
@@ -87,7 +87,7 @@ const onComplete = () => console.log('Game complete!');
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `theme` | `Partial<Pong404Theme>` | See below | Customize colors and fonts |
+| `theme` | `Partial<Breakout404Theme>` | See below | Customize colors and fonts |
 | `difficulty` | `'easy' \| 'medium' \| 'hard'` | `'medium'` | Game difficulty |
 | `showScore` | `boolean` | `true` | Show score and lives |
 | `onComplete` | `() => void` | - | Callback when all blocks destroyed |
@@ -98,7 +98,7 @@ const onComplete = () => console.log('Game complete!');
 ### Theme
 
 ```typescript
-interface Pong404Theme {
+interface Breakout404Theme {
   background: string;  // Canvas background color
   paddle: string;      // Paddle color
   ball: string;        // Ball color

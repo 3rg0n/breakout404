@@ -1,4 +1,4 @@
-import type { Pong404Options, Pong404Theme, GameState, DifficultySettings } from './types';
+import type { Breakout404Options, Breakout404Theme, GameState, DifficultySettings } from './types';
 import { mergeTheme } from './theme';
 import { create404Blocks, checkBlockCollision } from './blocks';
 import { render } from './renderer';
@@ -9,17 +9,17 @@ const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
   hard: { ballSpeed: 8, paddleWidth: 80, lives: 2 },
 };
 
-export class Pong404Game {
+export class Breakout404Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
-  private theme: Pong404Theme;
-  private options: Pong404Options;
+  private theme: Breakout404Theme;
+  private options: Breakout404Options;
   private state: GameState;
   private settings: DifficultySettings;
   private animationId: number | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
-  constructor(container: string | HTMLElement, options: Pong404Options = {}) {
+  constructor(container: string | HTMLElement, options: Breakout404Options = {}) {
     // Get or create container
     const containerEl =
       typeof container === 'string' ? document.querySelector<HTMLElement>(container) : container;

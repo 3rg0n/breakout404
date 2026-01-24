@@ -27,9 +27,9 @@ const notFoundHTML = `<!DOCTYPE html>
 <body>
   <div id="game"></div>
   <script type="module">
-    import { Pong404Game } from '/static/pong404.mjs';
+    import { Breakout404Game } from '/static/breakout404.mjs';
 
-    new Pong404Game('#game', {
+    new Breakout404Game('#game', {
       difficulty: 'medium',
       showScore: true,
       theme: {
@@ -69,7 +69,7 @@ func main() {
 
 		w.Header().Set("Content-Type", "text/html")
 		fmt.Fprint(w, `
-			<h1>Go Pong404 Example</h1>
+			<h1>Go Breakout404 Example</h1>
 			<p>Visit <a href="/anything">/anything</a> to see the 404 game.</p>
 		`)
 	})
