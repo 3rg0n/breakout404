@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="game"></div>
+
+  <!-- Using UMD build from CDN (replace with actual published URL) -->
+  <script src="https://unpkg.com/@pong404/core/dist/pong404.umd.js"></script>
+  <script>
+    // The UMD build exposes Pong404 globally
+    new Pong404.Pong404Game('#game', {
+      difficulty: 'medium',
+      showScore: true,
+      theme: {
+        background: '#1a1a2e',
+        paddle: '#e94560',
+        ball: '#ffffff',
+        blocks: ['#e94560', '#f39c12', '#3498db', '#9b59b6', '#1abc9c'],
+        text: '#ffffff',
+      },
+      onComplete: () => {
+        console.log('You destroyed the 404!');
+        // Optional: redirect to home
+        // window.location.href = '/';
+      },
+    });
+  </script>
+</body>
+</html>

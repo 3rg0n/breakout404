@@ -1,0 +1,37 @@
+{
+  "name": "@pong404/react",
+  "version": "1.0.0",
+  "description": "React component for Pong404 - a Breakout-style 404 page game",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rimraf dist"
+  },
+  "keywords": ["404", "pong", "breakout", "game", "react", "nextjs"],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
+  },
+  "dependencies": {
+    "@pong404/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "react": "^18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "rimraf": "^5.0.0"
+  }
+}

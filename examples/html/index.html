@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="game"></div>
+
+  <!-- For local development, use the built file -->
+  <script type="module">
+    // When using from npm: import { Pong404Game } from '@pong404/core';
+    // For local dev with built package:
+    import { Pong404Game } from '../../packages/core/dist/pong404.mjs';
+
+    new Pong404Game('#game', {
+      difficulty: 'medium',
+      showScore: true,
+      theme: {
+        background: '#0a0a0a',
+        paddle: '#00ff88',
+        ball: '#ffffff',
+        blocks: ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff'],
+        text: '#ffffff',
+      },
+      onComplete: () => {
+        console.log('You destroyed the 404!');
+      },
+    });
+  </script>
+</body>
+</html>
