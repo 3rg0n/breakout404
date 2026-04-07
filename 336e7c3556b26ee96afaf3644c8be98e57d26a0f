@@ -1,0 +1,25 @@
+packages/core/src/game.ts
+  0cc1765c353922fc 40-41,105-106,136-137,140,309
+packages/core/src/renderer.ts
+  0cc1765c353922fc 7-9,11-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "336e7c3556b26ee96afaf3644c8be98e57d26a0f",
+  "prompts": {
+    "0cc1765c353922fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97f41903-08e3-4134-b940-d5986ee0597b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Ergon Copeland",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 6,
+      "accepted_lines": 13,
+      "overriden_lines": 0
+    }
+  }
+}
