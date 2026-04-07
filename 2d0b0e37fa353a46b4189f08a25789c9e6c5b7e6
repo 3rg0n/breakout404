@@ -1,0 +1,23 @@
+docs/index.html
+  0cc1765c353922fc 1-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "2d0b0e37fa353a46b4189f08a25789c9e6c5b7e6",
+  "prompts": {
+    "0cc1765c353922fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97f41903-08e3-4134-b940-d5986ee0597b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Ergon Copeland",
+      "messages": [],
+      "total_additions": 133,
+      "total_deletions": 0,
+      "accepted_lines": 133,
+      "overriden_lines": 0
+    }
+  }
+}
