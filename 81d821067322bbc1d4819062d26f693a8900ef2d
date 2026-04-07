@@ -1,0 +1,25 @@
+packages/core/src/game.ts
+  0cc1765c353922fc 258-260,266-281,286-287
+CHANGELOG.md
+  0cc1765c353922fc 28-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "81d821067322bbc1d4819062d26f693a8900ef2d",
+  "prompts": {
+    "0cc1765c353922fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97f41903-08e3-4134-b940-d5986ee0597b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Ergon Copeland",
+      "messages": [],
+      "total_additions": 24,
+      "total_deletions": 2,
+      "accepted_lines": 24,
+      "overriden_lines": 0
+    }
+  }
+}
