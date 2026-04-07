@@ -235,7 +235,7 @@ var l = {
 			},
 			paddle: {
 				x: e / 2 - this.settings.paddleWidth / 2,
-				y: t - 40,
+				y: t * .85,
 				width: this.settings.paddleWidth,
 				height: 12
 			},

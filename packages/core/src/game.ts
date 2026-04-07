@@ -115,7 +115,7 @@ export class Breakout404Game {
       },
       paddle: {
         x: width / 2 - this.settings.paddleWidth / 2,
-        y: height - 40,
+        y: height * 0.85,
         width: this.settings.paddleWidth,
         height: 12,
       },
