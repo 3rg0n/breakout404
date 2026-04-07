@@ -255,16 +255,36 @@ export class Breakout404Game {
       ball.y = paddle.y - ball.radius;
     }
 
-    // Block collisions
+    // Block collisions — destroy all hit blocks but only reverse direction once
+    let deflectX = false;
+    let deflectY = false;
     blocks.forEach((block) => {
       if (checkBlockCollision(ball.x, ball.y, ball.radius, block)) {
         block.active = false;
         this.state.score += 10;
-        ball.dy = -ball.dy;
+
+        // Determine deflection axis from the first collision
+        if (!deflectX && !deflectY) {
+          const overlapLeft = (ball.x + ball.radius) - block.x;
+          const overlapRight = (block.x + block.width) - (ball.x - ball.radius);
+          const overlapTop = (ball.y + ball.radius) - block.y;
+          const overlapBottom = (block.y + block.height) - (ball.y - ball.radius);
+
+          const minOverlapX = Math.min(overlapLeft, overlapRight);
+          const minOverlapY = Math.min(overlapTop, overlapBottom);
+
+          if (minOverlapX < minOverlapY) {
+            deflectX = true;
+          } else {
+            deflectY = true;
+          }
+        }
 
         this.options.onBlockDestroyed?.(blocks.filter((b) => b.active).length);
       }
     });
+    if (deflectX) ball.dx = -ball.dx;
+    if (deflectY) ball.dy = -ball.dy;
 
     // Ball fell below paddle
     if (ball.y - ball.radius > height) {

@@ -284,9 +284,16 @@ var l = {
 			let n = ((e.x - t.x) / t.width - .5) * Math.PI * .7, r = Math.sqrt(e.dx * e.dx + e.dy * e.dy);
 			e.dx = r * Math.sin(n), e.dy = -Math.abs(r * Math.cos(n)), e.y = t.y - e.radius;
 		}
+		let s = !1, c = !1;
 		n.forEach((t) => {
-			a(e.x, e.y, e.radius, t) && (t.active = !1, this.state.score += 10, e.dy = -e.dy, this.options.onBlockDestroyed?.(n.filter((e) => e.active).length));
-		}), e.y - e.radius > o && (this.state.lives--, this.log.info("Life lost", { livesRemaining: this.state.lives }), this.state.lives <= 0 ? (this.state.gameOver = !0, this.state.won = !1, this.log.info("Game over", { score: this.state.score })) : (e.x = i / 2, e.y = o * .7, e.dx = this.settings.ballSpeed * (Math.random() > .5 ? 1 : -1), e.dy = -this.settings.ballSpeed, this.state.started = !1)), n.every((e) => !e.active) && (this.state.gameOver = !0, this.state.won = !0, this.log.info("Game won", { score: this.state.score }), this.options.onComplete?.(), this.options.redirectUrl && (this.log.info("Redirecting", { url: this.options.redirectUrl }), setTimeout(() => {
+			if (a(e.x, e.y, e.radius, t)) {
+				if (t.active = !1, this.state.score += 10, !s && !c) {
+					let n = e.x + e.radius - t.x, r = t.x + t.width - (e.x - e.radius), i = e.y + e.radius - t.y, a = t.y + t.height - (e.y - e.radius);
+					Math.min(n, r) < Math.min(i, a) ? s = !0 : c = !0;
+				}
+				this.options.onBlockDestroyed?.(n.filter((e) => e.active).length);
+			}
+		}), s && (e.dx = -e.dx), c && (e.dy = -e.dy), e.y - e.radius > o && (this.state.lives--, this.log.info("Life lost", { livesRemaining: this.state.lives }), this.state.lives <= 0 ? (this.state.gameOver = !0, this.state.won = !1, this.log.info("Game over", { score: this.state.score })) : (e.x = i / 2, e.y = o * .7, e.dx = this.settings.ballSpeed * (Math.random() > .5 ? 1 : -1), e.dy = -this.settings.ballSpeed, this.state.started = !1)), n.every((e) => !e.active) && (this.state.gameOver = !0, this.state.won = !0, this.log.info("Game won", { score: this.state.score }), this.options.onComplete?.(), this.options.redirectUrl && (this.log.info("Redirecting", { url: this.options.redirectUrl }), setTimeout(() => {
 			window.location.href = this.options.redirectUrl;
 		}, this.options.redirectDelay || 2e3)));
 	}

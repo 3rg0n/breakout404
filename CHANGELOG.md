@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Invalid `difficulty` values now fall back to `'medium'` with a warning instead of crashing
 
 ### Fixed
+- Ball passing through blocks when hitting multiple blocks in a single frame (dy reversal canceled out on even-count hits)
+- Ball deflection now uses overlap-based axis detection — side hits reverse dx, top/bottom hits reverse dy
 - Open redirect vulnerability (CWE-601) via unvalidated `redirectUrl` parameter
 - 27 known CVEs remediated by updating all dependencies (Next.js 14→16, vitest 1→4, vite 5→6, typescript-eslint 6→8, vite-plugin-dts 3→4)
 - Canvas resource exhaustion (CWE-400) via unbounded canvas dimensions and uncapped animation frame rate
