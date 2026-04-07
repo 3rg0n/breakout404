@@ -4,9 +4,12 @@ export function render(
   ctx: CanvasRenderingContext2D,
   state: GameState,
   theme: Breakout404Theme,
-  showScore: boolean
+  showScore: boolean,
+  logicalWidth: number,
+  logicalHeight: number
 ): void {
-  const { width, height } = ctx.canvas;
+  const width = logicalWidth;
+  const height = logicalHeight;
 
   // Clear canvas
   ctx.fillStyle = theme.background;

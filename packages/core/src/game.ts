@@ -37,6 +37,8 @@ export class Breakout404Game {
   private resizeObserver: ResizeObserver | null = null;
   private lastFrameTime = 0;
   private log: Breakout404Logger;
+  private logicalWidth = 800;
+  private logicalHeight = 600;
 
   constructor(container: string | HTMLElement, options: Breakout404Options = {}) {
     this.log = options.logger ?? noopLogger;
@@ -100,8 +102,8 @@ export class Breakout404Game {
   }
 
   private createInitialState(): GameState {
-    const width = this.canvas.width || 800;
-    const height = this.canvas.height || 600;
+    const width = this.logicalWidth;
+    const height = this.logicalHeight;
 
     return {
       ball: {
@@ -131,9 +133,11 @@ export class Breakout404Game {
     if (!rect) return;
 
     const dpr = window.devicePixelRatio || 1;
+    this.logicalWidth = rect.width;
+    this.logicalHeight = rect.height;
     this.canvas.width = Math.min(rect.width * dpr, MAX_CANVAS_DIM);
     this.canvas.height = Math.min(rect.height * dpr, MAX_CANVAS_DIM);
-    this.ctx.scale(dpr, dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     // Recreate state with new dimensions
     if (this.state) {
@@ -302,7 +306,7 @@ export class Breakout404Game {
     if (now - this.lastFrameTime >= TARGET_FRAME_MS) {
       this.lastFrameTime = now;
       this.update();
-      render(this.ctx, this.state, this.theme, this.options.showScore ?? true);
+      render(this.ctx, this.state, this.theme, this.options.showScore ?? true, this.logicalWidth, this.logicalHeight);
     }
     this.animationId = requestAnimationFrame(this.gameLoop);
   };

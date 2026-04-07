@@ -156,11 +156,11 @@ function a(e, t, n, r) {
 }
 //#endregion
 //#region src/renderer.ts
-function o(e, t, n, r) {
-	let { width: i, height: a } = e.canvas;
-	e.fillStyle = n.background, e.fillRect(0, 0, i, a), t.blocks.forEach((t) => {
+function o(e, t, n, r, i, a) {
+	let o = i, s = a;
+	e.fillStyle = n.background, e.fillRect(0, 0, o, s), t.blocks.forEach((t) => {
 		t.active && (e.fillStyle = t.color, e.fillRect(t.x, t.y, t.width, t.height));
-	}), e.fillStyle = n.paddle, e.fillRect(t.paddle.x, t.paddle.y, t.paddle.width, t.paddle.height), e.fillStyle = n.ball, e.beginPath(), e.arc(t.ball.x, t.ball.y, t.ball.radius, 0, Math.PI * 2), e.fill(), r && (e.fillStyle = n.text, e.font = `16px ${n.font}`, e.textAlign = "left", e.fillText(`Score: ${t.score}`, 10, 25), e.textAlign = "right", e.fillText(`Lives: ${t.lives}`, i - 10, 25)), !t.started && !t.gameOver && (e.fillStyle = n.text, e.font = `20px ${n.font}`, e.textAlign = "center", e.fillText("Click or Press Space to Start", i / 2, a * .75)), t.gameOver && (e.fillStyle = n.text, e.font = `32px ${n.font}`, e.textAlign = "center", t.won ? (e.fillText("Page Found!", i / 2, a / 2), e.font = `18px ${n.font}`, e.fillText("You destroyed the 404!", i / 2, a / 2 + 35)) : (e.fillText("Game Over", i / 2, a / 2), e.font = `18px ${n.font}`, e.fillText("Click or Press Space to Restart", i / 2, a / 2 + 35)));
+	}), e.fillStyle = n.paddle, e.fillRect(t.paddle.x, t.paddle.y, t.paddle.width, t.paddle.height), e.fillStyle = n.ball, e.beginPath(), e.arc(t.ball.x, t.ball.y, t.ball.radius, 0, Math.PI * 2), e.fill(), r && (e.fillStyle = n.text, e.font = `16px ${n.font}`, e.textAlign = "left", e.fillText(`Score: ${t.score}`, 10, 25), e.textAlign = "right", e.fillText(`Lives: ${t.lives}`, o - 10, 25)), !t.started && !t.gameOver && (e.fillStyle = n.text, e.font = `20px ${n.font}`, e.textAlign = "center", e.fillText("Click or Press Space to Start", o / 2, s * .75)), t.gameOver && (e.fillStyle = n.text, e.font = `32px ${n.font}`, e.textAlign = "center", t.won ? (e.fillText("Page Found!", o / 2, s / 2), e.font = `18px ${n.font}`, e.fillText("You destroyed the 404!", o / 2, s / 2 + 35)) : (e.fillText("Game Over", o / 2, s / 2), e.font = `18px ${n.font}`, e.fillText("Click or Press Space to Restart", o / 2, s / 2 + 35)));
 }
 //#endregion
 //#region src/security.ts
@@ -199,8 +199,8 @@ var l = {
 	error() {}
 }, p = class {
 	constructor(e, n = {}) {
-		this.animationId = null, this.resizeObserver = null, this.lastFrameTime = 0, this.gameLoop = (e = 0) => {
-			e - this.lastFrameTime >= d && (this.lastFrameTime = e, this.update(), o(this.ctx, this.state, this.theme, this.options.showScore ?? !0)), this.animationId = requestAnimationFrame(this.gameLoop);
+		this.animationId = null, this.resizeObserver = null, this.lastFrameTime = 0, this.logicalWidth = 800, this.logicalHeight = 600, this.gameLoop = (e = 0) => {
+			e - this.lastFrameTime >= d && (this.lastFrameTime = e, this.update(), o(this.ctx, this.state, this.theme, this.options.showScore ?? !0, this.logicalWidth, this.logicalHeight)), this.animationId = requestAnimationFrame(this.gameLoop);
 		}, this.log = n.logger ?? f;
 		let r = typeof e == "string" ? document.querySelector(e) : e;
 		if (!r) {
@@ -224,7 +224,7 @@ var l = {
 		}), this.gameLoop();
 	}
 	createInitialState() {
-		let e = this.canvas.width || 800, t = this.canvas.height || 600;
+		let e = this.logicalWidth, t = this.logicalHeight;
 		return {
 			ball: {
 				x: e / 2,
@@ -251,7 +251,7 @@ var l = {
 		let e = this.canvas.parentElement?.getBoundingClientRect();
 		if (!e) return;
 		let t = window.devicePixelRatio || 1;
-		if (this.canvas.width = Math.min(e.width * t, u), this.canvas.height = Math.min(e.height * t, u), this.ctx.scale(t, t), this.state) {
+		if (this.logicalWidth = e.width, this.logicalHeight = e.height, this.canvas.width = Math.min(e.width * t, u), this.canvas.height = Math.min(e.height * t, u), this.ctx.setTransform(t, 0, 0, t, 0, 0), this.state) {
 			let e = this.state.started, t = this.state.gameOver;
 			this.state = this.createInitialState(), this.state.started = e, this.state.gameOver = t;
 		}
