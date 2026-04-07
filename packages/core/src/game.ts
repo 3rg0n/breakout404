@@ -1,12 +1,29 @@
-import type { Breakout404Options, Breakout404Theme, GameState, DifficultySettings } from './types';
+import type {
+  Breakout404Options,
+  Breakout404Theme,
+  Breakout404Logger,
+  GameState,
+  DifficultySettings,
+} from './types';
 import { mergeTheme } from './theme';
 import { create404Blocks, checkBlockCollision } from './blocks';
 import { render } from './renderer';
+import { isValidRedirectUrl } from './security';
 
 const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
   easy: { ballSpeed: 4, paddleWidth: 120, lives: 5 },
   medium: { ballSpeed: 6, paddleWidth: 100, lives: 3 },
   hard: { ballSpeed: 8, paddleWidth: 80, lives: 2 },
+};
+
+const MAX_CANVAS_DIM = 4096;
+const TARGET_FRAME_MS = 1000 / 60; // ~16.67ms for 60 FPS
+
+const noopLogger: Breakout404Logger = {
+  debug() {},
+  info() {},
+  warn() {},
+  error() {},
 };
 
 export class Breakout404Game {
@@ -18,14 +35,20 @@ export class Breakout404Game {
   private settings: DifficultySettings;
   private animationId: number | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private lastFrameTime = 0;
+  private log: Breakout404Logger;
 
   constructor(container: string | HTMLElement, options: Breakout404Options = {}) {
+    this.log = options.logger ?? noopLogger;
+
     // Get or create container
     const containerEl =
       typeof container === 'string' ? document.querySelector<HTMLElement>(container) : container;
 
     if (!containerEl) {
-      throw new Error(`Container not found: ${container}`);
+      const err = new Error(`Container not found: ${container}`);
+      this.log.error('Container not found', err, { container: String(container) });
+      throw err;
     }
 
     // Create canvas
@@ -37,14 +60,29 @@ export class Breakout404Game {
 
     const ctx = this.canvas.getContext('2d');
     if (!ctx) {
-      throw new Error('Could not get 2D context');
+      const err = new Error('Could not get 2D context');
+      this.log.error('Canvas 2D context unavailable', err);
+      throw err;
     }
     this.ctx = ctx;
 
     // Setup options
     this.options = options;
     this.theme = mergeTheme(options.theme);
-    this.settings = DIFFICULTY_SETTINGS[options.difficulty || 'medium'];
+
+    const difficulty = options.difficulty || 'medium';
+    this.settings = DIFFICULTY_SETTINGS[difficulty] ?? DIFFICULTY_SETTINGS['medium']; // eslint-disable-line security/detect-object-injection
+    if (!DIFFICULTY_SETTINGS[difficulty]) { // eslint-disable-line security/detect-object-injection
+      this.log.warn('Invalid difficulty, defaulting to medium', { difficulty });
+    }
+
+    // Validate redirectUrl at construction time
+    if (options.redirectUrl && !isValidRedirectUrl(options.redirectUrl)) {
+      this.log.warn('Invalid redirectUrl rejected (only http:, https:, or relative paths allowed)', {
+        redirectUrl: options.redirectUrl,
+      });
+      this.options = { ...options, redirectUrl: undefined };
+    }
 
     // Initialize state
     this.state = this.createInitialState();
@@ -54,6 +92,8 @@ export class Breakout404Game {
 
     // Setup event listeners
     this.setupEventListeners();
+
+    this.log.info('Game initialized', { difficulty, showScore: options.showScore ?? true });
 
     // Start render loop
     this.gameLoop();
@@ -91,8 +131,8 @@ export class Breakout404Game {
     if (!rect) return;
 
     const dpr = window.devicePixelRatio || 1;
-    this.canvas.width = rect.width * dpr;
-    this.canvas.height = rect.height * dpr;
+    this.canvas.width = Math.min(rect.width * dpr, MAX_CANVAS_DIM);
+    this.canvas.height = Math.min(rect.height * dpr, MAX_CANVAS_DIM);
     this.ctx.scale(dpr, dpr);
 
     // Recreate state with new dimensions
@@ -163,10 +203,12 @@ export class Breakout404Game {
   private handleStart(): void {
     if (!this.state.started && !this.state.gameOver) {
       this.state.started = true;
+      this.log.info('Game started');
     } else if (this.state.gameOver && !this.state.won) {
       // Restart game
       this.state = this.createInitialState();
       this.state.started = true;
+      this.log.info('Game restarted');
     }
   }
 
@@ -223,10 +265,12 @@ export class Breakout404Game {
     // Ball fell below paddle
     if (ball.y - ball.radius > height) {
       this.state.lives--;
+      this.log.info('Life lost', { livesRemaining: this.state.lives });
 
       if (this.state.lives <= 0) {
         this.state.gameOver = true;
         this.state.won = false;
+        this.log.info('Game over', { score: this.state.score });
       } else {
         // Reset ball position
         ball.x = width / 2;
@@ -241,9 +285,11 @@ export class Breakout404Game {
     if (blocks.every((b) => !b.active)) {
       this.state.gameOver = true;
       this.state.won = true;
+      this.log.info('Game won', { score: this.state.score });
       this.options.onComplete?.();
 
       if (this.options.redirectUrl) {
+        this.log.info('Redirecting', { url: this.options.redirectUrl });
         setTimeout(() => {
           window.location.href = this.options.redirectUrl!;
         }, this.options.redirectDelay || 2000);
@@ -251,9 +297,13 @@ export class Breakout404Game {
     }
   }
 
-  private gameLoop = (): void => {
-    this.update();
-    render(this.ctx, this.state, this.theme, this.options.showScore ?? true);
+  private gameLoop = (now = 0): void => {
+    // Frame rate cap: skip frame if called too soon
+    if (now - this.lastFrameTime >= TARGET_FRAME_MS) {
+      this.lastFrameTime = now;
+      this.update();
+      render(this.ctx, this.state, this.theme, this.options.showScore ?? true);
+    }
     this.animationId = requestAnimationFrame(this.gameLoop);
   };
 
@@ -265,9 +315,11 @@ export class Breakout404Game {
       this.resizeObserver.disconnect();
     }
     this.canvas.remove();
+    this.log.info('Game destroyed');
   }
 
   public reset(): void {
     this.state = this.createInitialState();
+    this.log.info('Game reset');
   }
 }

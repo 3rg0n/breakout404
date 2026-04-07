@@ -21,10 +21,17 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 
-# Environment
+# Environment and secrets
 .env
 .env.local
 .env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+credentials*
+*secret*
 
 # Testing
 coverage/

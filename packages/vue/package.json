@@ -12,14 +12,26 @@
       "require": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rimraf dist"
   },
-  "keywords": ["404", "breakout", "game", "vue", "nuxt"],
+  "keywords": [
+    "404",
+    "breakout",
+    "game",
+    "vue",
+    "nuxt"
+  ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "peerDependencies": {
     "vue": ">=3.0.0"
   },
@@ -27,9 +39,9 @@
     "@breakout404/core": "workspace:*"
   },
   "devDependencies": {
-    "vue": "^3.4.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.3.0",
-    "rimraf": "^5.0.0"
+    "rimraf": "^5.0.10",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vue": "^3.5.32"
   }
 }

@@ -50,7 +50,7 @@ export function create404Blocks(
   let offsetX = startX;
 
   digits.forEach((digit) => {
-    const pattern = DIGIT_PATTERNS[digit];
+    const pattern = DIGIT_PATTERNS[digit]; // eslint-disable-line security/detect-object-injection
 
     pattern.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {

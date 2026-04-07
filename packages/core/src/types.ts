@@ -7,6 +7,13 @@ export interface Breakout404Theme {
   font: string;
 }
 
+export interface Breakout404Logger {
+  debug(msg: string, context?: Record<string, unknown>): void;
+  info(msg: string, context?: Record<string, unknown>): void;
+  warn(msg: string, context?: Record<string, unknown>): void;
+  error(msg: string, error?: Error, context?: Record<string, unknown>): void;
+}
+
 export interface Breakout404Options {
   theme?: Partial<Breakout404Theme>;
   difficulty?: 'easy' | 'medium' | 'hard';
@@ -15,6 +22,7 @@ export interface Breakout404Options {
   onBlockDestroyed?: (remaining: number) => void;
   redirectUrl?: string;
   redirectDelay?: number;
+  logger?: Breakout404Logger;
 }
 
 export interface Block {
