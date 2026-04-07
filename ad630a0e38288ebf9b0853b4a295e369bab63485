@@ -1,0 +1,27 @@
+CONTRIBUTORS.md
+  0cc1765c353922fc 1-11
+README.md
+  0cc1765c353922fc 95,97,164-169,172
+LICENSE
+  0cc1765c353922fc 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "ad630a0e38288ebf9b0853b4a295e369bab63485",
+  "prompts": {
+    "0cc1765c353922fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97f41903-08e3-4134-b940-d5986ee0597b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Ergon Copeland",
+      "messages": [],
+      "total_additions": 41,
+      "total_deletions": 2,
+      "accepted_lines": 41,
+      "overriden_lines": 0
+    }
+  }
+}
