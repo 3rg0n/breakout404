@@ -92,8 +92,9 @@ const onComplete = () => console.log('Game complete!');
 | `showScore` | `boolean` | `true` | Show score and lives |
 | `onComplete` | `() => void` | - | Callback when all blocks destroyed |
 | `onBlockDestroyed` | `(remaining: number) => void` | - | Callback when a block is destroyed |
-| `redirectUrl` | `string` | - | URL to redirect after completion |
+| `redirectUrl` | `string` | - | URL to redirect after completion (http/https/relative only) |
 | `redirectDelay` | `number` | `2000` | Delay before redirect (ms) |
+| `logger` | `Breakout404Logger` | - | Optional structured logger for game lifecycle events |
 
 ### Theme
 
@@ -160,6 +161,12 @@ See the `examples/` directory for usage with:
 - Express.js
 - Go
 
+## Security
+
+This project includes a [MAESTRO threat model](THREAT_MODEL.md) and has been hardened against OWASP top 10 vulnerabilities. The `redirectUrl` parameter is validated to reject dangerous protocols (`javascript:`, `data:`, etc.). See [CHANGELOG.md](CHANGELOG.md) for security-related changes.
+
+To report a security issue, please open a GitHub issue or contact the maintainers directly.
+
 ## License
 
-MIT
+[MIT](LICENSE)
