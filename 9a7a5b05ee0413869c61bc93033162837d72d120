@@ -1,0 +1,55 @@
+examples/nextjs/app/not-found.tsx
+  0cc1765c353922fc 3
+examples/html/cdn-example.html
+  0cc1765c353922fc 31
+packages/vue/src/Breakout404.ts
+  0cc1765c353922fc 6
+.npmrc
+  0cc1765c353922fc 1
+README.md
+  0cc1765c353922fc 5-6,20,23,26,36,51,80
+examples/nextjs/package.json
+  0cc1765c353922fc 11
+CHANGELOG.md
+  0cc1765c353922fc 7,21,24,32-33,41-55
+packages/react/package.json
+  0cc1765c353922fc 2,40
+packages/react/src/Breakout404.tsx
+  0cc1765c353922fc 2
+packages/react/src/index.ts
+  0cc1765c353922fc 8
+package.json
+  0cc1765c353922fc 3,7
+docs/index.html
+  0cc1765c353922fc 161,166
+.github/workflows/ci.yml
+  0cc1765c353922fc 34
+packages/core/package.json
+  0cc1765c353922fc 2-3
+packages/vue/src/index.ts
+  0cc1765c353922fc 8
+packages/vue/package.json
+  0cc1765c353922fc 2-3,39
+examples/html/index.html
+  0cc1765c353922fc 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "9a7a5b05ee0413869c61bc93033162837d72d120",
+  "prompts": {
+    "0cc1765c353922fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97f41903-08e3-4134-b940-d5986ee0597b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Ergon Copeland",
+      "messages": [],
+      "total_additions": 52,
+      "total_deletions": 33,
+      "accepted_lines": 49,
+      "overriden_lines": 0
+    }
+  }
+}
