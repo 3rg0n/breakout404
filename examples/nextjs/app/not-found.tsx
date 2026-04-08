@@ -1,6 +1,6 @@
 'use client';
 
-import { Breakout404 } from '@breakout404/react';
+import { Breakout404 } from '@3rg0n/breakout404-react';
 
 export default function NotFound() {
   return (

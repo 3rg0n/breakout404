@@ -41,7 +41,7 @@ importers:
 
   examples/nextjs:
     dependencies:
-      '@breakout404/react':
+      '@3rg0n/breakout404-react':
         specifier: workspace:*
         version: link:../../packages/react
       next:
@@ -78,7 +78,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@breakout404/core':
+      '@3rg0n/breakout404-core':
         specifier: workspace:*
         version: link:../core
       react-dom:
@@ -103,7 +103,7 @@ importers:
 
   packages/vue:
     dependencies:
-      '@breakout404/core':
+      '@3rg0n/breakout404-core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

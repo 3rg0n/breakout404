@@ -1,6 +1,6 @@
 {
-  "name": "@breakout404/vue",
-  "version": "1.0.0",
+  "name": "@3rg0n/breakout404-vue",
+  "version": "0.5.0",
   "description": "Vue component for Breakout404 - a Breakout-style 404 page game",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -36,7 +36,7 @@
     "vue": ">=3.0.0"
   },
   "dependencies": {
-    "@breakout404/core": "workspace:*"
+    "@3rg0n/breakout404-core": "workspace:*"
   },
   "devDependencies": {
     "rimraf": "^5.0.10",

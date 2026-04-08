@@ -1,6 +1,6 @@
 {
-  "name": "@breakout404/core",
-  "version": "1.0.0",
+  "name": "@3rg0n/breakout404-core",
+  "version": "0.5.0",
   "description": "Core Breakout404 game engine - a Breakout-style 404 page game",
   "main": "./dist/breakout404.umd.js",
   "module": "./dist/breakout404.mjs",

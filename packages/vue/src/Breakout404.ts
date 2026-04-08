@@ -3,7 +3,7 @@ import {
   Breakout404Game,
   type Breakout404Options,
   type Breakout404Theme,
-} from '@breakout404/core';
+} from '@3rg0n/breakout404-core';
 
 export const Breakout404 = defineComponent({
   name: 'Breakout404',

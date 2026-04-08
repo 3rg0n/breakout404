@@ -5,5 +5,5 @@ export {
   defaultTheme,
   type Breakout404Theme,
   type Breakout404Options,
-} from '@breakout404/core';
+} from '@3rg0n/breakout404-core';
 export default Breakout404;

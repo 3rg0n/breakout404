@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Breakout404Game, type Breakout404Options } from '@breakout404/core';
+import { Breakout404Game, type Breakout404Options } from '@3rg0n/breakout404-core';
 
 export interface Breakout404Props extends Breakout404Options {
   className?: string;

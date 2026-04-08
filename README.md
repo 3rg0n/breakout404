@@ -2,6 +2,8 @@
 
 A customizable 404 page game library where users destroy blocks forming "404" in a Breakout-style game. Works with any framework.
 
+**[Live Demo](https://3rg0n.github.io/breakout404/)** | **[Try the 404 page](https://3rg0n.github.io/breakout404/play)**
+
 ## Features
 
 - Breakout-style gameplay with blocks arranged to spell "404"
@@ -15,13 +17,13 @@ A customizable 404 page game library where users destroy blocks forming "404" in
 
 ```bash
 # Core package (vanilla JS/TS)
-npm install @breakout404/core
+npm install @3rg0n/breakout404-core
 
 # React/Next.js
-npm install @breakout404/react
+npm install @3rg0n/breakout404-react
 
 # Vue/Nuxt
-npm install @breakout404/vue
+npm install @3rg0n/breakout404-vue
 ```
 
 ## Quick Start
@@ -31,7 +33,7 @@ npm install @breakout404/vue
 ```html
 <div id="game" style="width: 100%; height: 100vh;"></div>
 <script type="module">
-  import { Breakout404Game } from '@breakout404/core';
+  import { Breakout404Game } from '@3rg0n/breakout404-core';
 
   new Breakout404Game('#game', {
     difficulty: 'medium',
@@ -46,7 +48,7 @@ npm install @breakout404/vue
 // app/not-found.tsx
 'use client';
 
-import { Breakout404 } from '@breakout404/react';
+import { Breakout404 } from '@3rg0n/breakout404-react';
 
 export default function NotFound() {
   return (
@@ -75,7 +77,7 @@ export default function NotFound() {
 </template>
 
 <script setup>
-import { Breakout404 } from '@breakout404/vue';
+import { Breakout404 } from '@3rg0n/breakout404-vue';
 
 const onComplete = () => console.log('Game complete!');
 </script>
