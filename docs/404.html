@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found</title>
+  <meta name="description" content="A customizable 404 page game library. Destroy the 404 in a Breakout-style game.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0a0a; font-family: monospace; }
+
+    #game { width: 100%; height: 100%; }
+
+    .controls {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .controls button {
+      padding: 6px 14px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: rgba(10, 10, 10, 0.85);
+      color: #888;
+      font-family: monospace;
+      font-size: 12px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .controls button:hover { color: #fff; border-color: #555; }
+    .controls button.active { color: #00ff88; border-color: #00ff88; }
+
+    .info {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #444;
+      font-size: 11px;
+      z-index: 10;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .info a { color: #555; pointer-events: auto; }
+    .info a:hover { color: #00ff88; }
+  </style>
+</head>
+<body>
+  <div class="info">
+    Page not found &mdash; destroy the 404! &nbsp;
+    <a href="/breakout404/">Home</a> &middot;
+    <a href="https://github.com/3rg0n/breakout404" target="_blank">GitHub</a>
+  </div>
+
+  <div id="game"></div>
+
+  <div class="controls">
+    <button data-difficulty="easy">Easy</button>
+    <button data-difficulty="medium" class="active">Medium</button>
+    <button data-difficulty="hard">Hard</button>
+    <button data-theme="default" class="active">Default</button>
+    <button data-theme="neon">Neon</button>
+    <button data-theme="ocean">Ocean</button>
+  </div>
+
+  <script type="module">
+    import { Breakout404Game } from '/breakout404/breakout404.mjs';
+
+    const themes = {
+      default: {
+        background: '#0a0a0a',
+        paddle: '#00ff88',
+        ball: '#ffffff',
+        blocks: ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff'],
+        text: '#ffffff',
+      },
+      neon: {
+        background: '#0d0221',
+        paddle: '#ff00ff',
+        ball: '#00ffff',
+        blocks: ['#ff00ff', '#ff0080', '#ff8000', '#ffff00', '#00ff00'],
+        text: '#00ffff',
+      },
+      ocean: {
+        background: '#0a192f',
+        paddle: '#64ffda',
+        ball: '#ccd6f6',
+        blocks: ['#0077b6', '#0096c7', '#00b4d8', '#48cae4', '#90e0ef'],
+        text: '#ccd6f6',
+      },
+    };
+
+    let currentDifficulty = 'medium';
+    let currentTheme = 'default';
+    let game = null;
+
+    function startGame() {
+      if (game) game.destroy();
+      game = new Breakout404Game('#game', {
+        difficulty: currentDifficulty,
+        showScore: true,
+        theme: themes[currentTheme],
+        onComplete: () => console.log('You destroyed the 404!'),
+      });
+    }
+
+    startGame();
+
+    document.querySelectorAll('[data-difficulty]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-difficulty]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDifficulty = btn.dataset.difficulty;
+        startGame();
+      });
+    });
+
+    document.querySelectorAll('[data-theme]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-theme]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTheme = btn.dataset.theme;
+        startGame();
+      });
+    });
+  </script>
+</body>
+</html>

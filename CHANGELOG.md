@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Custom `404.html` for GitHub Pages — any non-existent path loads the Breakout game
+- Marketing landing page at `index.html` with install instructions, code snippet, and feature overview
 - `Breakout404Logger` interface for structured logging of game lifecycle events (init, start, game over, win, redirect, life lost, reset, destroy)
 - `logger` option in `Breakout404Options` — pass a custom logger to capture game events server-side
 - `isValidRedirectUrl()` exported utility for redirect URL validation
