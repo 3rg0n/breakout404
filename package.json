@@ -7,6 +7,7 @@
     "build": "pnpm -r --filter @3rg0n/* build",
     "dev": "pnpm -r --parallel dev",
     "clean": "pnpm -r clean",
+    "docs:build": "pnpm --filter @3rg0n/breakout404-core build && node scripts/copy-docs-bundle.js",
     "lint": "eslint \"packages/*/src/**/*.ts\" \"packages/*/src/**/*.tsx\"",
     "lint:fix": "eslint \"packages/*/src/**/*.ts\" \"packages/*/src/**/*.tsx\" --fix",
     "format": "prettier --write \"packages/*/src/**/*.{ts,tsx}\"",

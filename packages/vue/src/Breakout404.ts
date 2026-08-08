@@ -1,8 +1,9 @@
-import { defineComponent, ref, onMounted, onUnmounted, h, type PropType } from 'vue';
+import { defineComponent, ref, onMounted, onUnmounted, h, watch, type PropType } from 'vue';
 import {
   Breakout404Game,
   type Breakout404Options,
   type Breakout404Theme,
+  type Breakout404Logger,
 } from '@3rg0n/breakout404-core';
 
 export const Breakout404 = defineComponent({
@@ -28,31 +29,52 @@ export const Breakout404 = defineComponent({
       type: Number,
       default: 2000,
     },
+    logger: {
+      type: Object as PropType<Breakout404Logger>,
+      default: undefined,
+    },
   },
   emits: ['complete', 'blockDestroyed'],
   setup(props, { emit }) {
     const containerRef = ref<HTMLElement | null>(null);
     let game: Breakout404Game | null = null;
 
+    const buildOptions = (): Breakout404Options => ({
+      theme: props.theme,
+      difficulty: props.difficulty,
+      showScore: props.showScore,
+      redirectUrl: props.redirectUrl,
+      redirectDelay: props.redirectDelay,
+      logger: props.logger,
+      onComplete: () => emit('complete'),
+      onBlockDestroyed: (remaining) => emit('blockDestroyed', remaining),
+    });
+
     onMounted(() => {
       if (!containerRef.value) return;
-
-      const options: Breakout404Options = {
-        theme: props.theme,
-        difficulty: props.difficulty,
-        showScore: props.showScore,
-        redirectUrl: props.redirectUrl,
-        redirectDelay: props.redirectDelay,
-        onComplete: () => emit('complete'),
-        onBlockDestroyed: (remaining) => emit('blockDestroyed', remaining),
-      };
-
-      game = new Breakout404Game(containerRef.value, options);
+      game = new Breakout404Game(containerRef.value, buildOptions());
     });
 
     onUnmounted(() => {
       game?.destroy();
     });
+
+    // Re-apply options when any reactive prop changes.
+    watch(
+      () => [props.difficulty, props.showScore, props.redirectUrl, props.redirectDelay],
+      () => game?.updateOptions(buildOptions())
+    );
+
+    watch(
+      () => props.theme,
+      () => game?.updateOptions(buildOptions()),
+      { deep: true }
+    );
+
+    watch(
+      () => props.logger,
+      () => game?.updateOptions(buildOptions())
+    );
 
     return () =>
       h('div', {

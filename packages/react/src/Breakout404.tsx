@@ -14,24 +14,55 @@ export function Breakout404({
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Breakout404Game | null>(null);
 
+  // Store mutable callbacks in a ref so the game always calls the latest
+  // version, even though the game instance is created once.
+  const callbacksRef = useRef({
+    onComplete: options.onComplete,
+    onBlockDestroyed: options.onBlockDestroyed,
+  });
+  callbacksRef.current = {
+    onComplete: options.onComplete,
+    onBlockDestroyed: options.onBlockDestroyed,
+  };
+
+  // Create the game instance once on mount.
   useEffect(() => {
     if (!containerRef.current) return;
 
-    gameRef.current = new Breakout404Game(containerRef.current, options);
+    gameRef.current = new Breakout404Game(containerRef.current, {
+      ...options,
+      onComplete: () => callbacksRef.current.onComplete?.(),
+      onBlockDestroyed: (remaining) => callbacksRef.current.onBlockDestroyed?.(remaining),
+    });
 
     return () => {
       gameRef.current?.destroy();
     };
   }, []);
 
-  // Update options when they change
+  // Update config options when they change (difficulty, theme, redirect, etc.)
+  // Function callbacks are handled via the ref above, so we exclude them.
   useEffect(() => {
     if (gameRef.current) {
-      // For now, reset the game when options change
-      // A more sophisticated approach would update individual settings
-      gameRef.current.reset();
+      gameRef.current.updateOptions({
+        theme: options.theme,
+        difficulty: options.difficulty,
+        showScore: options.showScore,
+        redirectUrl: options.redirectUrl,
+        redirectDelay: options.redirectDelay,
+        logger: options.logger,
+        onComplete: () => callbacksRef.current.onComplete?.(),
+        onBlockDestroyed: (remaining) => callbacksRef.current.onBlockDestroyed?.(remaining),
+      });
     }
-  }, [options.difficulty, options.theme]);
+  }, [
+    options.difficulty,
+    options.theme,
+    options.showScore,
+    options.redirectUrl,
+    options.redirectDelay,
+    options.logger,
+  ]);
 
   return (
     <div

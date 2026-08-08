@@ -46,7 +46,7 @@ export function create404Blocks(
   const startX = (canvasWidth - totalWidth) / 2;
   const startY = canvasHeight * 0.1; // Start 10% from top
 
-  const digits = ['4', '0', '4'];
+  const digits: ('4' | '0')[] = ['4', '0', '4'];
   let offsetX = startX;
 
   digits.forEach((digit) => {

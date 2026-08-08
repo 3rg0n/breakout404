@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Architecture
+- **Extracted pure game engine into `engine.ts`** — all domain logic (physics, collision, win/lose state machine) is now separated from DOM/IO concerns in `game.ts`. The engine is framework-agnostic and fully unit-testable with no browser mocks required.
+- **Separated side effects from domain logic** — `Breakout404Game.update()` now delegates to the pure `engine.step()` function and interprets returned `GameEvent` values, keeping DOM manipulation and callbacks in the adapter layer (clean architecture / dependency inversion).
+- **`Breakout404Game.updateOptions()`** — new public method to re-apply game options at runtime without destroying and recreating the game instance.
+- **`isValidRedirectUrl()` is now SSR-safe** — no longer depends on `window.location.href`; falls back to a static base URL when `window` is unavailable. Accepts an optional `baseUrl` parameter.
+
+### Fixed
+- **Window-level event listener memory leak** — `keydown`/`keyup` listeners are now stored as bound references and removed in `destroy()`. Previously they accumulated indefinitely across game instance create/destroy cycles (e.g. React HMR, Strict Mode).
+- **Second `requestAnimationFrame` loop eliminated** — keyboard paddle movement is now handled within the single main game loop instead of a separate independent RAF loop.
+- **`getBoundingClientRect()` no longer called every frame** — canvas dimensions are cached from the last `ResizeObserver` callback and reused in the update loop, eliminating per-frame layout reflows.
+- **React wrapper option updates** — changing `difficulty`, `theme`, `redirectUrl`, etc. via props now properly re-applies to the running game via `updateOptions()` instead of a no-op `reset()`.
+- **`onBlockDestroyed` callback optimized** — remaining-block count is now computed with a running counter (O(n) per frame) instead of `blocks.filter().length` per hit (O(n²) worst case).
+- **Vue wrapper missing `logger` prop** — the Vue component now supports the `logger` option, matching the React wrapper and core API.
+
+### Added
+- **`engine.test.ts`** — 33 new tests covering the game engine: state initialization, difficulty resolution, start/restart logic, ball physics, wall/paddle/block collisions, win/lose conditions, and event emission.
+- **SSR-safety tests** for `isValidRedirectUrl()` with explicit `baseUrl` parameter.
+- **`GameEvent` / `GameEventType` types** — domain-level event descriptors for the engine's pure step function.
+- **Engine exports** — `DIFFICULTY_SETTINGS`, `MAX_CANVAS_DIM`, `TARGET_FRAME_MS`, `createInitialState`, `startOrRestart`, `step`, `countActiveBlocks` are now exported from the public API.
+
+### Dead Code / Cleanup
+- **Removed unused `vite-plugin-dts` dependency** from `packages/core` devDependencies (type declarations are generated via `tsc --emitDeclarationOnly`, not the Vite plugin).
+- **Re-exported full public API** from `@3rg0n/breakout404-react` and `@3rg0n/breakout404-vue` — previously only `defaultTheme`, `Breakout404Theme`, and `Breakout404Options` were re-exported; now all core exports are available from the wrapper packages.
+- **Eliminated `eslint-disable` suppressions** in `game.ts` by typing `DIFFICULTY_SETTINGS` as `Record<'easy' | 'medium' | 'hard', ...>` and using a new `resolveDifficulty()` helper.
+
+### Documentation
+- Fixed stale `@breakout404/*` package scope references → `@3rg0n/breakout404/*` in `CHANGELOG.md` and `THREAT_MODEL.md`.
+- Fixed `examples/go/go.mod` module name from `pong404-example` → `breakout404-example`.
+- Updated stale file/line references in `THREAT_MODEL.md` remediation table.
+
 ## [0.5.0] - 2026-04-08
 
 ### Added
@@ -14,7 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `isValidRedirectUrl()` exported utility for redirect URL validation
 - `security.test.ts` — 8 tests covering redirect URL validation against XSS protocols
 - Security headers middleware in Express example (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
-- `.npmrc` with explicit `@breakout404` registry scoping to prevent dependency confusion
+- `.npmrc` with explicit `@3rg0n` registry scoping to prevent dependency confusion
 - `publishConfig` in all workspace package.json files
 - `eslint-plugin-security` for static security analysis
 - GitHub Actions CI/CD pipeline (`.github/workflows/ci.yml`) with lint, typecheck, test, audit, and SBOM generation

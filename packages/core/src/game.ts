@@ -3,21 +3,20 @@ import type {
   Breakout404Theme,
   Breakout404Logger,
   GameState,
-  DifficultySettings,
+  GameEvent,
 } from './types';
 import { mergeTheme } from './theme';
-import { create404Blocks, checkBlockCollision } from './blocks';
-import { render } from './renderer';
 import { isValidRedirectUrl } from './security';
-
-const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
-  easy: { ballSpeed: 4, paddleWidth: 120, lives: 5 },
-  medium: { ballSpeed: 6, paddleWidth: 100, lives: 3 },
-  hard: { ballSpeed: 8, paddleWidth: 80, lives: 2 },
-};
-
-const MAX_CANVAS_DIM = 4096;
-const TARGET_FRAME_MS = 1000 / 60; // ~16.67ms for 60 FPS
+import { render } from './renderer';
+import {
+  DIFFICULTY_SETTINGS,
+  MAX_CANVAS_DIM,
+  TARGET_FRAME_MS,
+  createInitialState,
+  startOrRestart,
+  step,
+  resolveDifficulty,
+} from './engine';
 
 const noopLogger: Breakout404Logger = {
   debug() {},
@@ -26,19 +25,33 @@ const noopLogger: Breakout404Logger = {
   error() {},
 };
 
+const PADDLE_KEYBOARD_SPEED = 12;
+
 export class Breakout404Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private theme: Breakout404Theme;
   private options: Breakout404Options;
   private state: GameState;
-  private settings: DifficultySettings;
+  private settings = DIFFICULTY_SETTINGS.medium;
   private animationId: number | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private lastFrameTime = 0;
   private log: Breakout404Logger;
   private logicalWidth = 800;
   private logicalHeight = 600;
+
+  // Cached keyboard state — updated by event listeners, read by the game loop.
+  // Replaces the old separate RAF polling loop.
+  private keys: Record<string, boolean> = {};
+
+  // Stored handler references so they can be removed in destroy() (prevents
+  // window-level listener leaks across instance create/destroy cycles).
+  private boundHandlePointerMove = this.handlePointerMove.bind(this);
+  private boundHandleKeydown = this.handleKeydown.bind(this);
+  private boundHandleKeyup = this.handleKeyup.bind(this);
+  private boundHandleStart = this.handleStart.bind(this);
+  private boundHandleResize = this.handleResize.bind(this);
 
   constructor(container: string | HTMLElement, options: Breakout404Options = {}) {
     this.log = options.logger ?? noopLogger;
@@ -72,17 +85,18 @@ export class Breakout404Game {
     this.options = options;
     this.theme = mergeTheme(options.theme);
 
-    const difficulty = options.difficulty || 'medium';
-    this.settings = DIFFICULTY_SETTINGS[difficulty] ?? DIFFICULTY_SETTINGS['medium']; // eslint-disable-line security/detect-object-injection
-    if (!DIFFICULTY_SETTINGS[difficulty]) { // eslint-disable-line security/detect-object-injection
-      this.log.warn('Invalid difficulty, defaulting to medium', { difficulty });
+    const difficulty = resolveDifficulty(options.difficulty);
+    this.settings = DIFFICULTY_SETTINGS[difficulty]; // eslint-disable-line security/detect-object-injection
+    if (options.difficulty !== undefined && options.difficulty !== difficulty) {
+      this.log.warn('Invalid difficulty, defaulting to medium', { difficulty: options.difficulty });
     }
 
     // Validate redirectUrl at construction time
     if (options.redirectUrl && !isValidRedirectUrl(options.redirectUrl)) {
-      this.log.warn('Invalid redirectUrl rejected (only http:, https:, or relative paths allowed)', {
-        redirectUrl: options.redirectUrl,
-      });
+      this.log.warn(
+        'Invalid redirectUrl rejected (only http:, https:, or relative paths allowed)',
+        { redirectUrl: options.redirectUrl }
+      );
       this.options = { ...options, redirectUrl: undefined };
     }
 
@@ -95,37 +109,17 @@ export class Breakout404Game {
     // Setup event listeners
     this.setupEventListeners();
 
-    this.log.info('Game initialized', { difficulty, showScore: options.showScore ?? true });
+    this.log.info('Game initialized', {
+      difficulty,
+      showScore: options.showScore ?? true,
+    });
 
     // Start render loop
     this.gameLoop();
   }
 
   private createInitialState(): GameState {
-    const width = this.logicalWidth;
-    const height = this.logicalHeight;
-
-    return {
-      ball: {
-        x: width / 2,
-        y: height * 0.7,
-        dx: this.settings.ballSpeed * (Math.random() > 0.5 ? 1 : -1),
-        dy: -this.settings.ballSpeed,
-        radius: 8,
-      },
-      paddle: {
-        x: width / 2 - this.settings.paddleWidth / 2,
-        y: height * 0.85,
-        width: this.settings.paddleWidth,
-        height: 12,
-      },
-      blocks: create404Blocks(width, height, this.theme),
-      score: 0,
-      lives: this.settings.lives,
-      gameOver: false,
-      won: false,
-      started: false,
-    };
+    return createInitialState(this.logicalWidth, this.logicalHeight, this.settings, this.theme);
   }
 
   private resize(): void {
@@ -139,194 +133,161 @@ export class Breakout404Game {
     this.canvas.height = Math.min(rect.height * dpr, MAX_CANVAS_DIM);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Recreate state with new dimensions
+    // Recreate state with new dimensions, preserving game state flags
     if (this.state) {
       const wasStarted = this.state.started;
       const wasGameOver = this.state.gameOver;
+      const wasWon = this.state.won;
       this.state = this.createInitialState();
       this.state.started = wasStarted;
       this.state.gameOver = wasGameOver;
+      this.state.won = wasWon;
     }
   }
 
   private setupEventListeners(): void {
     // Mouse/touch movement
-    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
-      const rect = this.canvas.getBoundingClientRect();
-      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-      const x = clientX - rect.left;
-      const maxX = rect.width - this.state.paddle.width;
-      this.state.paddle.x = Math.max(0, Math.min(x - this.state.paddle.width / 2, maxX));
-    };
+    this.canvas.addEventListener('mousemove', this.boundHandlePointerMove);
+    this.canvas.addEventListener('touchmove', this.boundHandlePointerMove, { passive: false });
 
-    this.canvas.addEventListener('mousemove', handlePointerMove);
-    this.canvas.addEventListener('touchmove', handlePointerMove);
-
-    // Keyboard movement
-    const keys: Record<string, boolean> = {};
-    window.addEventListener('keydown', (e) => {
-      keys[e.key] = true;
-
-      if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        this.handleStart();
-      }
-    });
-    window.addEventListener('keyup', (e) => {
-      keys[e.key] = false;
-    });
-
-    // Update paddle position based on keys
-    const updatePaddleFromKeys = () => {
-      const speed = 12;
-      const rect = this.canvas.getBoundingClientRect();
-      const maxX = rect.width - this.state.paddle.width;
-
-      if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
-        this.state.paddle.x = Math.max(0, this.state.paddle.x - speed);
-      }
-      if (keys['ArrowRight'] || keys['d'] || keys['D']) {
-        this.state.paddle.x = Math.min(maxX, this.state.paddle.x + speed);
-      }
-
-      requestAnimationFrame(updatePaddleFromKeys);
-    };
-    updatePaddleFromKeys();
+    // Keyboard movement + start/action
+    window.addEventListener('keydown', this.boundHandleKeydown);
+    window.addEventListener('keyup', this.boundHandleKeyup);
 
     // Click/tap to start
-    this.canvas.addEventListener('click', () => this.handleStart());
-    this.canvas.addEventListener('touchstart', () => this.handleStart());
+    this.canvas.addEventListener('click', this.boundHandleStart);
+    this.canvas.addEventListener('touchstart', this.boundHandleStart);
 
     // Resize observer
-    this.resizeObserver = new ResizeObserver(() => this.resize());
+    this.resizeObserver = new ResizeObserver(this.boundHandleResize);
     if (this.canvas.parentElement) {
       this.resizeObserver.observe(this.canvas.parentElement);
     }
   }
 
+  private handlePointerMove(e: MouseEvent | TouchEvent): void {
+    const rect = this.canvas.getBoundingClientRect();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const x = clientX - rect.left;
+    const maxX = rect.width - this.state.paddle.width;
+    this.state.paddle.x = Math.max(0, Math.min(x - this.state.paddle.width / 2, maxX));
+  }
+
+  private handleKeydown(e: KeyboardEvent): void {
+    this.keys[e.key] = true;
+
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      this.handleStart();
+    }
+  }
+
+  private handleKeyup(e: KeyboardEvent): void {
+    this.keys[e.key] = false;
+  }
+
+  private handleResize(): void {
+    this.resize();
+  }
+
   private handleStart(): void {
-    if (!this.state.started && !this.state.gameOver) {
-      this.state.started = true;
+    const event = startOrRestart(
+      this.state,
+      this.logicalWidth,
+      this.logicalHeight,
+      this.settings,
+      this.theme
+    );
+
+    if (event?.type === 'started') {
       this.log.info('Game started');
-    } else if (this.state.gameOver && !this.state.won) {
-      // Restart game
-      this.state = this.createInitialState();
-      this.state.started = true;
+    } else if (event?.type === 'restarted') {
       this.log.info('Game restarted');
+    }
+  }
+
+  /** Move paddle based on cached keyboard state. Called from the game loop. */
+  private updatePaddleFromKeys(): void {
+    const maxX = this.logicalWidth - this.state.paddle.width;
+
+    if (this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']) {
+      this.state.paddle.x = Math.max(0, this.state.paddle.x - PADDLE_KEYBOARD_SPEED);
+    }
+    if (this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) {
+      this.state.paddle.x = Math.min(maxX, this.state.paddle.x + PADDLE_KEYBOARD_SPEED);
     }
   }
 
   private update(): void {
     if (!this.state.started || this.state.gameOver) return;
 
-    const { ball, paddle, blocks } = this.state;
-    const rect = this.canvas.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
+    // Keyboard paddle movement — now part of the single game loop
+    // (replaces the separate RAF polling loop).
+    this.updatePaddleFromKeys();
 
-    // Move ball
-    ball.x += ball.dx;
-    ball.y += ball.dy;
+    // Pure domain step — no DOM access, returns events for side-effect handling
+    const events = step(this.state, this.settings, this.logicalWidth, this.logicalHeight);
 
-    // Wall collisions
-    if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= width) {
-      ball.dx = -ball.dx;
-      ball.x = Math.max(ball.radius, Math.min(ball.x, width - ball.radius));
-    }
-    if (ball.y - ball.radius <= 0) {
-      ball.dy = -ball.dy;
-      ball.y = ball.radius;
-    }
+    // Interpret events and execute side effects (callbacks, logging, redirect)
+    this.handleGameEvents(events);
+  }
 
-    // Paddle collision
-    if (
-      ball.y + ball.radius >= paddle.y &&
-      ball.y - ball.radius <= paddle.y + paddle.height &&
-      ball.x >= paddle.x &&
-      ball.x <= paddle.x + paddle.width
-    ) {
-      // Calculate bounce angle based on where ball hit paddle
-      const hitPos = (ball.x - paddle.x) / paddle.width;
-      const angle = (hitPos - 0.5) * Math.PI * 0.7; // -63 to +63 degrees
-
-      const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
-      ball.dx = speed * Math.sin(angle);
-      ball.dy = -Math.abs(speed * Math.cos(angle));
-      ball.y = paddle.y - ball.radius;
-    }
-
-    // Block collisions — destroy all hit blocks but only reverse direction once
-    let deflectX = false;
-    let deflectY = false;
-    blocks.forEach((block) => {
-      if (checkBlockCollision(ball.x, ball.y, ball.radius, block)) {
-        block.active = false;
-        this.state.score += 10;
-
-        // Determine deflection axis from the first collision
-        if (!deflectX && !deflectY) {
-          const overlapLeft = (ball.x + ball.radius) - block.x;
-          const overlapRight = (block.x + block.width) - (ball.x - ball.radius);
-          const overlapTop = (ball.y + ball.radius) - block.y;
-          const overlapBottom = (block.y + block.height) - (ball.y - ball.radius);
-
-          const minOverlapX = Math.min(overlapLeft, overlapRight);
-          const minOverlapY = Math.min(overlapTop, overlapBottom);
-
-          if (minOverlapX < minOverlapY) {
-            deflectX = true;
-          } else {
-            deflectY = true;
-          }
-        }
-
-        this.options.onBlockDestroyed?.(blocks.filter((b) => b.active).length);
-      }
-    });
-    if (deflectX) ball.dx = -ball.dx;
-    if (deflectY) ball.dy = -ball.dy;
-
-    // Ball fell below paddle
-    if (ball.y - ball.radius > height) {
-      this.state.lives--;
-      this.log.info('Life lost', { livesRemaining: this.state.lives });
-
-      if (this.state.lives <= 0) {
-        this.state.gameOver = true;
-        this.state.won = false;
-        this.log.info('Game over', { score: this.state.score });
-      } else {
-        // Reset ball position
-        ball.x = width / 2;
-        ball.y = height * 0.7;
-        ball.dx = this.settings.ballSpeed * (Math.random() > 0.5 ? 1 : -1);
-        ball.dy = -this.settings.ballSpeed;
-        this.state.started = false;
-      }
-    }
-
-    // Check win condition
-    if (blocks.every((b) => !b.active)) {
-      this.state.gameOver = true;
-      this.state.won = true;
-      this.log.info('Game won', { score: this.state.score });
-      this.options.onComplete?.();
-
-      if (this.options.redirectUrl) {
-        this.log.info('Redirecting', { url: this.options.redirectUrl });
-        setTimeout(() => {
-          window.location.href = this.options.redirectUrl!;
-        }, this.options.redirectDelay || 2000);
+  /** Interpret engine events and execute side effects. */
+  private handleGameEvents(events: GameEvent[]): void {
+    for (const event of events) {
+      switch (event.type) {
+        case 'started':
+          this.log.info('Game started');
+          break;
+        case 'restarted':
+          this.log.info('Game restarted');
+          break;
+        case 'blockDestroyed':
+          this.options.onBlockDestroyed?.(event.payload?.remaining as number);
+          break;
+        case 'lifeLost':
+          this.log.info('Life lost', { livesRemaining: event.payload?.livesRemaining });
+          break;
+        case 'ballReset':
+          // Ball reset — no additional side effects needed
+          break;
+        case 'gameOver':
+          this.log.info('Game over', { score: event.payload?.score });
+          break;
+        case 'gameWon':
+          this.log.info('Game won', { score: event.payload?.score });
+          this.options.onComplete?.();
+          this.scheduleRedirect();
+          break;
       }
     }
   }
 
+  private scheduleRedirect(): void {
+    if (!this.options.redirectUrl) return;
+
+    this.log.info('Redirecting', { url: this.options.redirectUrl });
+    const delay = this.options.redirectDelay ?? 2000;
+    const url = this.options.redirectUrl;
+    setTimeout(() => {
+      window.location.href = url;
+    }, delay);
+  }
+
   private gameLoop = (now = 0): void => {
-    // Frame rate cap: skip frame if called too soon
+    // Frame rate cap: skip update+render if called too soon
     if (now - this.lastFrameTime >= TARGET_FRAME_MS) {
       this.lastFrameTime = now;
       this.update();
-      render(this.ctx, this.state, this.theme, this.options.showScore ?? true, this.logicalWidth, this.logicalHeight);
+      // Only render when the state actually advanced
+      render(
+        this.ctx,
+        this.state,
+        this.theme,
+        this.options.showScore ?? true,
+        this.logicalWidth,
+        this.logicalHeight
+      );
     }
     this.animationId = requestAnimationFrame(this.gameLoop);
   };
@@ -334,16 +295,61 @@ export class Breakout404Game {
   public destroy(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
+      this.animationId = null;
     }
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
+      this.resizeObserver = null;
     }
+
+    // Remove window-level listeners to prevent leaks across instance
+    // create/destroy cycles (e.g. HMR, React Strict Mode).
+    this.canvas.removeEventListener('mousemove', this.boundHandlePointerMove);
+    this.canvas.removeEventListener('touchmove', this.boundHandlePointerMove);
+    this.canvas.removeEventListener('click', this.boundHandleStart);
+    this.canvas.removeEventListener('touchstart', this.boundHandleStart);
+    window.removeEventListener('keydown', this.boundHandleKeydown);
+    window.removeEventListener('keyup', this.boundHandleKeyup);
+
     this.canvas.remove();
     this.log.info('Game destroyed');
   }
 
   public reset(): void {
     this.state = this.createInitialState();
+    this.keys = {};
     this.log.info('Game reset');
+  }
+
+  /**
+   * Re-apply game options at runtime (e.g. when framework props change).
+   *
+   * Updates the theme, difficulty settings, callbacks, and redirect config,
+   * then resets the game state to apply the new settings. The game restarts
+   * from the initial state with the new options.
+   */
+  public updateOptions(options: Breakout404Options): void {
+    this.options = options;
+    this.theme = mergeTheme(options.theme);
+
+    const difficulty = resolveDifficulty(options.difficulty);
+    this.settings = DIFFICULTY_SETTINGS[difficulty]; // eslint-disable-line security/detect-object-injection
+    if (options.difficulty !== undefined && options.difficulty !== difficulty) {
+      this.log.warn('Invalid difficulty, defaulting to medium', { difficulty: options.difficulty });
+    }
+
+    // Re-validate redirect URL
+    if (options.redirectUrl && !isValidRedirectUrl(options.redirectUrl)) {
+      this.log.warn(
+        'Invalid redirectUrl rejected (only http:, https:, or relative paths allowed)',
+        { redirectUrl: options.redirectUrl }
+      );
+      this.options = { ...options, redirectUrl: undefined };
+    }
+
+    // Reset state to pick up new difficulty/theme
+    this.state = this.createInitialState();
+    this.keys = {};
+    this.log.info('Options updated', { difficulty, showScore: options.showScore ?? true });
   }
 }

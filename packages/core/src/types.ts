@@ -65,3 +65,18 @@ export interface DifficultySettings {
   paddleWidth: number;
   lives: number;
 }
+
+export type GameEventType =
+  | 'started'
+  | 'restarted'
+  | 'blockDestroyed'
+  | 'lifeLost'
+  | 'ballReset'
+  | 'gameOver'
+  | 'gameWon'
+  | 'redirect';
+
+export interface GameEvent {
+  type: GameEventType;
+  payload?: Record<string, unknown>;
+}

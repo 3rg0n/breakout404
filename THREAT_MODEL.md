@@ -15,10 +15,10 @@ Breakout404 is a client-side Breakout game library for 404 error pages, implemen
 
 - **Languages**: TypeScript, JavaScript
 - **Package Manager**: pnpm (monorepo with workspaces)
-- **Packages**: `@breakout404/core` (canvas game engine), `@breakout404/react`, `@breakout404/vue`
+- **Packages**: `@3rg0n/breakout404-core` (canvas game engine), `@3rg0n/breakout404-react`, `@3rg0n/breakout404-vue`
 - **Examples**: Express server, Next.js app
 - **AI Components**: No
-- **Entry Points**: Express 404 handler (`examples/express/server.js`), Next.js not-found page (`examples/nextjs/app/not-found.tsx`), direct library import via `@breakout404/core`
+- **Entry Points**: Express 404 handler (`examples/express/server.js`), Next.js not-found page (`examples/nextjs/app/not-found.tsx`), direct library import via `@3rg0n/breakout404-core`
 - **Agentic Risk Factors**: None (no non-determinism, no autonomy, no agent identity, no A2A communication)
 
 ## Risk Summary
@@ -31,7 +31,7 @@ Breakout404 is a client-side Breakout game library for 404 error pages, implemen
 | 4 | T8 | L5 | No Audit Trail for Security Events | High | 3 | 2 | 6 | — | STRIDE:R, CWE-778 |
 | 5 | T22 | L4,L6 | No CI/CD Pipeline or Security Scanning | Medium | 2 | 2 | 4 | — | STRIDE:T/E, OWASP:A05 |
 | 6 | CWE-693 | L6 | Missing CSP and Security Headers | Medium | 2 | 2 | 4 | — | STRIDE:T, OWASP:A05, CWE-693 |
-| 7 | BV-3 | L7 | Dependency Confusion Risk (@breakout404/*) | Medium | 1 | 3 | 3 | — | STRIDE:T, OWASP:A08 |
+| 7 | BV-3 | L7 | Dependency Confusion Risk (@3rg0n/breakout404/*) | Medium | 1 | 3 | 3 | — | STRIDE:T, OWASP:A08 |
 | 8 | T4 | L4 | Canvas Resource Exhaustion (no size/FPS cap) | Medium | 2 | 1 | 2 | — | STRIDE:D, OWASP:A04, CWE-400 |
 | 9 | T23 | L5 | Client-Side Only Logs (tamper-trivial) | Medium | 2 | 1 | 2 | — | STRIDE:R, CWE-778 |
 | 10 | T22 | L6 | Incomplete .gitignore Secret Patterns | Low | 1 | 2 | 2 | — | STRIDE:ID, CWE-532 |
@@ -189,7 +189,7 @@ Scanner: `pnpm audit`
 
 **Finding: Dependency Confusion Risk (BV-3)**
 
-- **Issue**: `@breakout404/*` package namespace is not claimed on npm. No `.npmrc` with explicit registry scoping. No `publishConfig` in package.json files. External consumers could be tricked into pulling attacker-registered packages.
+- **Issue**: `@3rg0n/breakout404/*` package namespace is not claimed on npm. No `.npmrc` with explicit registry scoping. No `publishConfig` in package.json files. External consumers could be tricked into pulling attacker-registered packages.
 - **Severity**: Medium (Likelihood 1, Impact 3 = Risk 3)
 - **Mitigation**: Reserve/claim package names on npm. Add `.npmrc` with registry scoping. Add `publishConfig` to each package.json.
 
@@ -250,7 +250,7 @@ See Layer 7 finding #1 above for the full CVE table. Summary:
 5. **Add security headers to examples** (Medium, Risk 4)
    - `Content-Security-Policy`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`
 
-6. **Reserve @breakout404/* on npm** (Medium, Risk 3)
+6. **Reserve @3rg0n/breakout404/* on npm** (Medium, Risk 3)
    - Claim package names. Add `.npmrc` with registry scoping. Add `publishConfig`.
 
 7. **Cap canvas dimensions and frame rate** (Medium, Risk 2)
@@ -271,13 +271,13 @@ See Layer 7 finding #1 above for the full CVE table. Summary:
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ TRUST BOUNDARY 1: Library Consumer                      │
-│ (Developer integrating @breakout404/* into their app)   │
+│ (Developer integrating @3rg0n/breakout404/* into their app)   │
 │                                                         │
 │  ┌───────────────────────────────────────────────────┐  │
 │  │ TRUST BOUNDARY 2: Browser Sandbox                 │  │
 │  │                                                   │  │
 │  │  ┌─────────────────────────────────────────────┐  │  │
-│  │  │ @breakout404/core                           │  │  │
+│  │  │ @3rg0n/breakout404-core                           │  │  │
 │  │  │ - Canvas API (rendering)                    │  │  │
 │  │  │ - DOM API (event listeners, querySelector)  │  │  │
 │  │  │ - window.location (redirect) ← UNTRUSTED   │  │  │
@@ -285,7 +285,7 @@ See Layer 7 finding #1 above for the full CVE table. Summary:
 │  │                 │ options (theme, redirectUrl,     │  │
 │  │                 │ difficulty, callbacks)           │  │
 │  │  ┌──────────────┴──────────────────────────────┐  │  │
-│  │  │ @breakout404/react or @breakout404/vue      │  │  │
+│  │  │ @3rg0n/breakout404/react or @3rg0n/breakout404/vue      │  │  │
 │  │  │ - Props → options passthrough               │  │  │
 │  │  └──────────────┬──────────────────────────────┘  │  │
 │  │                 │                                  │  │
@@ -301,7 +301,7 @@ See Layer 7 finding #1 above for the full CVE table. Summary:
           │ npm install / pnpm add
 ┌─────────┴───────────────────────────────────────────────┐
 │ TRUST BOUNDARY 4: npm Registry (Supply Chain)           │
-│ - @breakout404/* packages (NOT yet claimed)             │
+│ - @3rg0n/breakout404/* packages (NOT yet claimed)             │
 │ - Transitive dependencies (27 known CVEs)               │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -316,15 +316,15 @@ See Layer 7 finding #1 above for the full CVE table. Summary:
 ```mermaid
 graph TD
     subgraph "Browser (Client)"
-        A[User Input<br/>Mouse/Keyboard/Touch] -->|coordinates, key events| B["@breakout404/core<br/>game.ts"]
+        A[User Input<br/>Mouse/Keyboard/Touch] -->|coordinates, key events| B["@3rg0n/breakout404-core<br/>game.ts"]
         B -->|Canvas API draw calls| C[Canvas Element]
         B -->|game state updates| D[In-Memory GameState]
         D -->|score, lives, blocks| B
         B -->|onComplete callback| E[Consumer Callback]
         B -->|"window.location.href<br/>⚠️ UNVALIDATED"| F[Browser Navigation]
 
-        G["@breakout404/react<br/>Breakout404.tsx"] -->|options props| B
-        H["@breakout404/vue<br/>Breakout404.ts"] -->|options props| B
+        G["@3rg0n/breakout404/react<br/>Breakout404.tsx"] -->|options props| B
+        H["@3rg0n/breakout404/vue<br/>Breakout404.ts"] -->|options props| B
     end
 
     subgraph "Server"
@@ -357,11 +357,11 @@ graph TD
 | 4 | T8 | No Audit Trail for Security Events | High | REMEDIATED | Structured logger captures all security-relevant events with context objects (difficulty, score, lives remaining, redirect URL). Consumers can plug in server-side loggers (Winston, Pino, etc.) via the `logger` option to persist audit trails. | `packages/core/src/game.ts`, `packages/core/src/types.ts` |
 | 5 | T22 | No CI/CD Pipeline or Security Scanning | Medium | REMEDIATED | Added GitHub Actions workflow (`.github/workflows/ci.yml`) with: dependency install, lint, typecheck (`tsc --noEmit` for all packages), test (`vitest run`), security audit (`pnpm audit --audit-level=moderate`), build, and SBOM generation (`@cyclonedx/cyclonedx-npm`). Runs on push/PR to main/master. | `.github/workflows/ci.yml` (new) |
 | 6 | CWE-693 | Missing CSP and Security Headers | Medium | REMEDIATED | Added security headers middleware to Express example: `Content-Security-Policy` (`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`. | `examples/express/server.js` |
-| 7 | BV-3 | Dependency Confusion Risk (@breakout404/*) | Medium | REMEDIATED | Created `.npmrc` with explicit `@breakout404:registry=https://registry.npmjs.org/` scoping. Added `publishConfig` with `"access": "public"` and explicit registry to all 3 workspace package.json files. Note: package names should still be claimed on npm before first publish. | `.npmrc` (new), `packages/core/package.json`, `packages/react/package.json`, `packages/vue/package.json` |
-| 8 | T4 | Canvas Resource Exhaustion (no size/FPS cap) | Medium | REMEDIATED | Canvas dimensions now capped at `MAX_CANVAS_DIM = 4096` pixels (`Math.min(rect.width * dpr, MAX_CANVAS_DIM)`). Game loop uses frame time tracking with `TARGET_FRAME_MS = 1000/60` (~16.67ms) to cap at 60 FPS — skips redundant frames on high-refresh displays. | `packages/core/src/game.ts` |
+| 7 | BV-3 | Dependency Confusion Risk (@3rg0n/breakout404/*) | Medium | REMEDIATED | Created `.npmrc` with explicit `@3rg0n:registry=https://registry.npmjs.org/` scoping. Added `publishConfig` with `"access": "public"` and explicit registry to all 3 workspace package.json files. Note: package names should still be claimed on npm before first publish. | `.npmrc` (new), `packages/core/package.json`, `packages/react/package.json`, `packages/vue/package.json` |
+| 8 | T4 | Canvas Resource Exhaustion (no size/FPS cap) | Medium | REMEDIATED | Canvas dimensions now capped at `MAX_CANVAS_DIM = 4096` pixels (`Math.min(rect.width * dpr, MAX_CANVAS_DIM)`). Game loop uses frame time tracking with `TARGET_FRAME_MS = 1000/60` (~16.67ms) to cap at 60 FPS — skips redundant frames on high-refresh displays. | `packages/core/src/engine.ts`, `packages/core/src/game.ts` |
 | 9 | T23 | Client-Side Only Logs (tamper-trivial) | Medium | REMEDIATED | The `Breakout404Logger` interface enables consumers to inject server-side logging backends. Events are emitted with structured context objects, allowing integration with centralized logging infrastructure. Client-side `console.log` in examples is augmented, not replaced. | `packages/core/src/types.ts`, `packages/core/src/game.ts` |
 | 10 | T22 | Incomplete .gitignore Secret Patterns | Low | REMEDIATED | Added patterns for: `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.jks`, `credentials*`, `*secret*`. | `.gitignore` |
-| 11 | T22 | Missing ESLint Security Plugin | Low | REMEDIATED | Installed `eslint-plugin-security@^4.0.0`. Added `security` to plugins and `plugin:security/recommended-legacy` to extends in `.eslintrc.cjs`. Three false-positive warnings on safe developer-controlled object lookups suppressed with inline comments. | `.eslintrc.cjs`, `package.json`, `packages/core/src/game.ts`, `packages/core/src/blocks.ts` |
+| 11 | T22 | Missing ESLint Security Plugin | Low | REMEDIATED | Installed `eslint-plugin-security@^4.0.0`. Added `security` to plugins and `plugin:security/recommended-legacy` to extends in `.eslintrc.cjs`. Safe developer-controlled object lookups use typed key access (`Record<union, ...>`) to avoid false-positive suppressions. | `.eslintrc.cjs`, `package.json`, `packages/core/src/blocks.ts` |
 | 12 | CWE-79 | Express Inline HTML Pattern (extension risk) | Low | MITIGATED | CSP headers (finding #6) restrict script execution to `'self'`, preventing injected inline scripts from executing even if the template literal is extended with user input in the future. The template literal pattern itself is unchanged as it currently contains no user input interpolation. | `examples/express/server.js` |
 | 13 | T13 | Missing SBOM Generation | Low | REMEDIATED | SBOM generation step added to CI pipeline using `@cyclonedx/cyclonedx-npm --output-file sbom.json --output-format JSON`. Runs on every CI build. | `.github/workflows/ci.yml` |
 | 14 | — | Express Example Serves HTTP Only | Low | ACCEPTED | This is a local development example. Express listens on `http://localhost:3000` which is appropriate for development. Production HTTPS deployment is the consumer's responsibility. Security headers (finding #6) are applied regardless of transport. | — |
@@ -385,5 +385,5 @@ core: OK    react: OK    vue: OK
 
 ### Remaining Manual Actions
 
-1. **Claim `@breakout404/*` on npm** — `.npmrc` and `publishConfig` are in place, but the package names must be registered on npmjs.com before first publish to fully close finding #7.
+1. **Claim `@3rg0n/breakout404/*` on npm** — `.npmrc` and `publishConfig` are in place, but the package names must be registered on npmjs.com before first publish to fully close finding #7.
 2. **Express example HTTP** — finding #14 is accepted risk for local development; production deployments must use TLS termination (reverse proxy, load balancer, or `https.createServer`).
