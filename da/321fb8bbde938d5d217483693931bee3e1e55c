@@ -1,0 +1,14 @@
+.github/workflows/deploy.yml
+  h_3c4228db611122 7,17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "da321fb8bbde938d5d217483693931bee3e1e55c",
+  "prompts": {},
+  "humans": {
+    "h_3c4228db611122": {
+      "author": "Ergon Copeland <196864108+ecopelan_cisco@users.noreply.github.com>"
+    }
+  }
+}
