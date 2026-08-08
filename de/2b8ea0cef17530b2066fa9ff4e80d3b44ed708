@@ -1,0 +1,21 @@
+.github/workflows/ci.yml
+  s_5cd1b28ed520c1::t_e574a6f83d7fbe 33-35
+packages/react/tsconfig.json
+  s_5cd1b28ed520c1::t_ac35673b903a32 14-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "de2b8ea0cef17530b2066fa9ff4e80d3b44ed708",
+  "prompts": {},
+  "sessions": {
+    "s_5cd1b28ed520c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "82e2267c-23d5-4c0c-8d96-7d91a00e70c4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Ergon Copeland <196864108+ecopelan_cisco@users.noreply.github.com>"
+    }
+  }
+}
