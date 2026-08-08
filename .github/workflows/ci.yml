@@ -30,6 +30,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Build
+        run: pnpm build
+
       - name: Typecheck
         run: pnpm -r --filter @3rg0n/* exec tsc --noEmit
 
@@ -38,9 +41,6 @@ jobs:
 
       - name: Security audit
         run: pnpm audit --audit-level=moderate
-
-      - name: Build
-        run: pnpm build
 
       - name: Generate SBOM
         run: npx @cyclonedx/cyclonedx-npm --output-file sbom.json --output-format JSON

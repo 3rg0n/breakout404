@@ -10,7 +10,10 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@3rg0n/breakout404-core": ["../../core/src/index.ts"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
