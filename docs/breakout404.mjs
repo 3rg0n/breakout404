@@ -358,9 +358,7 @@ var y = {
 			case "gameOver":
 				this.log.info("Game over", { score: t.payload?.score });
 				break;
-			case "gameWon":
-				this.log.info("Game won", { score: t.payload?.score }), this.options.onComplete?.(), this.scheduleRedirect();
-				break;
+			case "gameWon": this.log.info("Game won", { score: t.payload?.score }), this.options.onComplete?.(), this.scheduleRedirect();
 		}
 	}
 	scheduleRedirect() {
