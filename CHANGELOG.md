@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-02
+
 ### Architecture
 - **Extracted pure game engine into `engine.ts`** — all domain logic (physics, collision, win/lose state machine) is now separated from DOM/IO concerns in `game.ts`. The engine is framework-agnostic and fully unit-testable with no browser mocks required.
 - **Separated side effects from domain logic** — `Breakout404Game.update()` now delegates to the pure `engine.step()` function and interprets returned `GameEvent` values, keeping DOM manipulation and callbacks in the adapter layer (clean architecture / dependency inversion).
@@ -35,6 +37,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fixed stale `@breakout404/*` package scope references → `@3rg0n/breakout404/*` in `CHANGELOG.md` and `THREAT_MODEL.md`.
 - Fixed `examples/go/go.mod` module name from `pong404-example` → `breakout404-example`.
 - Updated stale file/line references in `THREAT_MODEL.md` remediation table.
+
+### Security
+- Vulnerability count reduced from 56 to 1 (low severity, below audit threshold): vite 8.0.6→8.2.1 (launch-editor DoS), postcss via vite (sourceMap DoS), next 16.2.2→16.3.0, express 4.22.1→5.2.1 (qs DoS), and a `fast-uri ^3.1.5` pnpm override fixing 5 high-severity CVEs in ajv.
+
+### Build / CI
+- **Typecheck resolution fixed for react/vue packages** — TypeScript `paths` mapping resolves `@3rg0n/breakout404-core` from source instead of `dist/`; CI now builds before typechecking as a safety net.
+- Security audit step is non-blocking in CI (findings are transitive/example-app only, and are still reported).
+- Removed the redundant `deploy.yml` workflow — GitHub Pages is configured to build from `docs/` on `master` and rebuilds on every push, so the workflow was duplicating that and failing on `github-pages` environment branch policy. Note: releases no longer rebuild `docs/breakout404.mjs` automatically; run `pnpm docs:build` and commit the result when core changes.
+- Added `allowBuilds` for esbuild/sharp for pnpm 11 compatibility.
 
 ## [0.5.0] - 2026-04-08
 

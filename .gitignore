@@ -5,6 +5,11 @@ node_modules/
 dist/
 .next/
 out/
+sbom.json
+
+# Compiled Go example binaries
+examples/go/breakout404-example
+examples/go/breakout404-example.exe
 
 # IDE
 .idea/
