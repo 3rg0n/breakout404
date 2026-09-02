@@ -1,0 +1,29 @@
+packages/core/package.json
+  s_b6e76c54a97474::t_473647544e042c 3
+packages/react/package.json
+  s_b6e76c54a97474::t_473647544e042c 3
+package.json
+  s_b6e76c54a97474::t_473647544e042c 3
+CHANGELOG.md
+  s_b6e76c54a97474::t_b36daed12702e5 47
+  s_b6e76c54a97474::t_ab40d619a65ec4 41-46,48-49
+  s_b6e76c54a97474::t_6fc238866aa539 9-10
+packages/vue/package.json
+  s_b6e76c54a97474::t_473647544e042c 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "f4330076b4870350316794accbe603e2e089d53f",
+  "prompts": {},
+  "sessions": {
+    "s_b6e76c54a97474": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80d77e53-4c32-451c-8ab4-6a2f02c5a97d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}
