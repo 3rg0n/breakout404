@@ -1,0 +1,41 @@
+packages/vue/README.md
+  s_b6e76c54a97474::t_dd03b7bb667bc4 1-106
+packages/react/LICENSE
+  s_b6e76c54a97474::t_feb9e416f3d48a 1-21
+packages/core/package.json
+  s_b6e76c54a97474::t_528c799b01b44a 3
+packages/react/package.json
+  s_b6e76c54a97474::t_528c799b01b44a 3
+package.json
+  s_b6e76c54a97474::t_528c799b01b44a 3
+packages/core/tsconfig.json
+  s_b6e76c54a97474::t_4a8918ce12ebff 17
+packages/react/README.md
+  s_b6e76c54a97474::t_6789440555a348 1-108
+packages/vue/package.json
+  s_b6e76c54a97474::t_528c799b01b44a 3
+packages/core/README.md
+  s_b6e76c54a97474::t_d6737723ef98f8 1-136
+packages/core/LICENSE
+  s_b6e76c54a97474::t_feb9e416f3d48a 1-21
+packages/vue/LICENSE
+  s_b6e76c54a97474::t_feb9e416f3d48a 1-21
+CHANGELOG.md
+  s_b6e76c54a97474::t_5a8853e660f89e 9-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bb026996536cde59a2e0e37b17159eb25b24844a",
+  "prompts": {},
+  "sessions": {
+    "s_b6e76c54a97474": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80d77e53-4c32-451c-8ab4-6a2f02c5a97d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "3rg0n <62959009+3rg0n@users.noreply.github.com>"
+    }
+  }
+}
