@@ -1,6 +1,6 @@
 {
   "name": "@3rg0n/breakout404-react",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "React component for Breakout404 - a Breakout-style 404 page game",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

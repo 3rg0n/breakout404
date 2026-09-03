@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-03
+
+### Added
+- **Per-package `README.md`** for `@3rg0n/breakout404-core`, `-react`, and `-vue`. npm renders the README next to each `package.json`, not the repo root one, so all three package pages were previously blank. Each covers install, framework-specific usage (Next.js App/Pages Router, Nuxt `<ClientOnly>`), the full prop/event tables, and the re-exported core API.
+- **`LICENSE` copied into each package** so the MIT text ships in every tarball.
+
+### Fixed
+- **Test type declarations no longer published** — `packages/core/tsconfig.json` excludes `src/**/*.test.ts`, so `blocks.test.d.ts`, `engine.test.d.ts`, `security.test.d.ts`, and `theme.test.d.ts` are no longer emitted into `dist/` and shipped to consumers.
+
+### Note
+- `@3rg0n/breakout404-vue` was never published at 0.6.0 (the recursive publish stopped after `-react`), so 0.6.1 is its first 0.6.x release. `-core` and `-react` 0.6.0 are on npm without READMEs; npm forbids republishing a version, so 0.6.1 is the fix.
+
 ## [0.6.0] - 2026-09-02
 
 ### Architecture
